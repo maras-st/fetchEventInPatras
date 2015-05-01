@@ -52,14 +52,38 @@
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav navbar-right">
                     <li>
-                        <a class="page-scroll" href="#search">ΑΝΑΖΗΤΗΣΗ</a>
+                        <a class="page-scroll" href="#search">Αναζητηση</a>
                     </li>
                     <li>
                         <a class="page-scroll" href="#events">Events</a>
                     </li>
                     <li>
-                        <a class="page-scroll" href="#contact">Contact</a>
+                        <a class="page-scroll" href="#contact">Επικοινωνια</a>
                     </li>
+                     <li class="dropdown">
+                     <a  class="dropdown-toggle" data-toggle="dropdown">Εισοδος <b class="caret"></b></a>
+                     <ul class="dropdown-menu" style="padding: 15px;min-width: 250px;">
+                        <li>
+                           <div class="row">
+                              <div class="col-md-12">
+                                 <form class="form" method="post" action="login.php" name="form_login">
+                                    <div class="form-group">
+                                       <label class="sr-only" for="username">Username</label>
+                                       <input type="text" name="username" id="username" placeholder="Username" required>
+                                    </div>
+                                    <div class="form-group">
+                                       <label class="sr-only" for="password">Password</label>
+                                       <input type="password" name="password" id="password" placeholder="Password" required>
+                                    </div>
+                                    <div class="form-group">
+                                       <input class="btn btn-success btn-block" name="submit" type="Submit" value="Login"/>
+                                    </div>
+                                 </form>
+                              </div>
+                           </div>
+                        </li>
+                     </ul>
+                  </li>
                 </ul>
             </div>
             <!-- /.navbar-collapse -->
