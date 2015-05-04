@@ -1,5 +1,6 @@
 <?php
-	//session_start(); // Starting Session
+	
+	session_start(); // Starting Session
 
 	$hostname="localhost"; //local server name default localhost
 	$usernameDB="root";  //mysql username default is root.
@@ -7,40 +8,50 @@
 	$database="webProjectDB";  //database name which you created
 
 	$error=''; // Variable To Store Error Message
-	if (isset($_POST['Submit'])) {
+	/*if (isset($_POST['Submit'])) {
 		if (empty($_POST['username']) || empty($_POST['password'])) {
 		$error = "Username or Password is invalid";
 		}
 	}
 	else
-	{
+	{*/
 		// Define $username and $password
-		$username=$_POST['username'];
-		$password=$_POST['password'];
+		//$username=$_POST['username'];
+		//$password=$_POST['password'];
+		$username= 'admin';
+		$password= 'admin';
+
 
 		// Establishing Connection with Server by passing server_name, user_id and password as a parameter
-		$connection = mysql_connect($hostname,$usernameDB,$passwordDB);
+		$connection = mysqli_connect($hostname,$usernameDB,$passwordDB);
+
+		// Check connection
+		if (!$conn) {
+		    die("Connection failed: " . mysqli_connect_error());
+		}
+		echo "Connected successfully";
 
 		// To protect MySQL injection for Security purpose
 		$username = stripslashes($username);
 		$password = stripslashes($password);
-		$username = mysql_real_escape_string($username);
-		$password = mysql_real_escape_string($password);
+		$username = mysqli_real_escape_string($username);
+		$password = mysqli_real_escape_string($password);
 
 		// Selecting Database
-		$db = mysql_select_db($database, $connection);
+		$db = mysqli_select_db($database, $connection);
 
 		// SQL query to fetch information of registerd users and finds user match.
-		$query = mysql_query("select * from users where password='$password' AND username='$username';", $connection);
-		$rows = mysql_num_rows($query);
+		$query = mysqli_query("SELECT * FROM users WHERE username='$username' AND password='$password'; ", $connection);
+		$rows = mysqli_num_rows($query);
+		print_r($rows);
 
 		if ($rows > 0) {
 			//$_SESSION['login_user']=$username; // Initializing Session
-			header("location: panel.html"); // Redirecting To Other Page
+			//header("location: panel.html"); // Redirecting To Other Page
 		} else {
 			$error = "Username or Password is invalid";
+			//header("location: error.html");
 		}
-		mysql_close($connection); // Closing Connection
-	}
-	<p> Hey </p>
+		mysqli_close($connection); // Closing Connection
+	//}
 ?>
