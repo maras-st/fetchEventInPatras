@@ -5,6 +5,9 @@
   define('FACEBOOK_SDK_V4_SRC_DIR', '/Facebook/');
   require __DIR__ . '/autoload.php';
 
+  //require_once ('connToDB.php');
+  //
+  // create table events(idDB int not null auto_increment, id int, name varchar(255), category varchar(255),  )
 
   require_once( 'Facebook/FacebookRequest.php' );
   require_once( 'Facebook/FacebookSession.php' );
@@ -68,7 +71,7 @@
   $request = new FacebookRequest(
     $session,
     'GET',
-    '/search?q=bar&type=place&center=38.247431,21.736739&distance=5000'
+    '/search?q=Πάτρα&type=place&center=38.247431,21.736739&distance=5000'
   );
   $response = $request->execute();
   $graphObject = $response->getGraphObject()->asArray();
@@ -80,7 +83,7 @@
 
   curl_setopt($ch, CURLOPT_TIMEOUT,5500); //increase the curl's timeout limit due to a timeout error on large facebook requests
 
-  //while loop, handling large requests
+  //while loop, handling large(more than one page) requests
   while(!empty($nextPageRequest)){
     $response = $nextPageRequest->execute();
     $graphObject = $response->getGraphObject()->asArray();
@@ -89,7 +92,27 @@
     $nextPageRequest = $response->getRequestForNextPage();
 
   }
+/*
+$stmt = $con->prepare('
+    INSERT INTO this_should_be_your_table_name
+    (id, created_time, place_id, latitude, longitude, state, street, zip, name)
+    VALUES
+    (?, ?, ?, ?, ?, ?)
+');
 
+foreach($graphObject['tagged_places']->data as $data) {
+   $stmt->execute(array(
+       $data->id,
+       $data->created_time,
+       $data->place->id,
+       $data->place->location->latitude,
+       $data->place->location->longitude,
+       $data->place->location->state,
+       $data->place->location->street,
+       $data->place->location->zip,
+       $data->place->name
+   ));
+}*/
   
   
 ?>
