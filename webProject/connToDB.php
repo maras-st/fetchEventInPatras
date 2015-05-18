@@ -1,8 +1,8 @@
 <?php
 
 	$hostname="localhost"; //local server name default localhost
-	$usernameDB="root";  //mysql username default is root.
-	$passwordDB="20/5/1993Mast";       
+	$usernameDB="";  //mysql username default is root.
+	$passwordDB="";       
 	$database="webProjectDB";  //database name which you created
 
 	$error=''; // Variable To Store Error Message
