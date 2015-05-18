@@ -1,9 +1,27 @@
+<?php 
+   echo $_SESSION['username'];
+   //session_start();
+   if (isset( $_SESSION['username'] ) ) {
+       header("Location:panel.html");
+    } else {
+        session_start();
+    }
+
+    print_r($_SESSION);
+    $myfile = fopen("search.txt", "w") or die("Unable to open file!");
+    $txt = $_SESSION['username'];
+    fwrite($myfile, $txt);
+    fclose($myfile);
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
 
     <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
@@ -35,7 +53,6 @@
 </head>
 
 <body id="page-top">
-
     <nav id="mainNav" class="navbar navbar-default navbar-fixed-top">
         <div class="container-fluid">
             <!-- Brand and toggle get grouped for better mobile display -->
@@ -66,7 +83,7 @@
                         <li>
                            <div class="row">
                               <div class="col-md-12">
-                                 <form class="form" method="post" action="login.php" name="form_login">
+                                 <form class="form" id="login_form" method="post" name="form_login" action="login.php">
                                     <div class="form-group">
                                        <label class="sr-only" for="username">Username</label>
                                        <input type="text" name="username" id="username" placeholder="Username" required>
@@ -76,7 +93,7 @@
                                        <input type="password" name="password" id="password" placeholder="Password" required>
                                     </div>
                                     <div class="form-group">
-                                       <input class="btn btn-success btn-block" name="Submit" type="Submit" value="Login"/>
+                                       <input class="btn btn-success btn-block" id="Submit" name="Submit" type="Submit" value="Login"/>
                                     </div>
                                  </form>
                               </div>
@@ -111,15 +128,20 @@
                     <hr class="light">
                     <p class="text-faded">Start Bootstrap has everything you need to get your new website up and running in no time! All of the templates and themes on Start Bootstrap are open source, free to download, and easy to use. No strings attached!</p>
                     <div class="col-sm-offset-1 col-md-offset-1 text-center">
-                        <form class="navbar-form" role="search">
+                        <form class="navbar-form" id="search_form" method="POST" role="search" action="search.php">
                             <div class="input-group">
-                                <input type="text" class="form-control" placeholder="Search" name="q">
+                                <input type="text" class="form-control" placeholder="Search" id="searchQuery" name="searchQuery">
                                 <div class="input-group-btn">
-                                    <button class="btn btn-default" type="submit"><i class="glyphicon glyphicon-search"></i></button>
+                                    <button class="btn btn-default" id="searchBtn" type="submit" data-target="#searchModal"><i class="glyphicon glyphicon-search"></i></button>
                                 </div>
                             </div>
                         </form>
-                    </div>     
+                    </div>
+
+                    <div class="tempRes" id="tempRes" name="tempRes">
+                    </div>
+
+
                 </div>
             </div>
         </div>
@@ -175,21 +197,13 @@
         </div>
     </section>
 
-
-    <div class="modal fade" id="detailsModal" tabindex="-1" role="dialog" aria-labelledby="detailsModalLabel" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content" id="detailsModalData">
-          <div class="modal-header" id="modalTitle">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-          </div>
-          <div class="modal-body" id="detailsModalBody">     
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-          </div>
-        </div>
-      </div>
+     <div class="modal fade" id="searchModal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+      
     </div>
+
+
+      
+
 
     <section id="contact" style="background:#A1A8A3">
         <div class="container">
@@ -230,49 +244,114 @@
     <script type="text/javascript">
         $("document").ready(function() {
             console.log("ready!");
-            
+
+            var url="showEvents.php";
+
+            $.getJSON(url,function(json){            // loop through the data here
+                $.each(json.members,function(i,dat){
+                    $('#fbEv').append( 
+                        '<div class="panel panel-default"> ' +
+                           ' <div class="panel-body" id="fbEv"> ' +
+                                '<h3 id="eventName">' +
+                                     dat.name +
+                                '</h3><br>' +
+                                dat.place + '<br>' +
+                                dat.owner_name +
+                                '<button class="btn btn-primary pull-right" id="detBtn" name="detBtn" data-toggle="modal" data-target="#detailsModal"> ΛΕΠΤΟΜΕΡΕΙΕΣ </button>' +
+                            '</div>' +
+                       '</div>'
+                        //<div class="modal fade" id="detailsModal" tabindex="-1" role="dialog" aria-labelledby="detailsModalLabel" aria-hidden="true"> 
+                       /* '<div class="modal" id="detailsModal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel">'+
+                            '<div class="modal-dialog">' +
+                                ' <div class="modal-content" id="detailsModalData">' +
+                                  ' <div class="modal-header" id="modalTitle">' +
+                                       ' <h4 class="modal-title" id="detailsModalLabel"> ' +
+                                             dat.name +
+                                        '</h4>' +
+                                      '</div>' +
+                                      '<div class="modal-body" id="detailsModalBody"> '+  
+                                        '<div class="modal-body" id="detailsModalBody">' +
+                                               dat.description +
+                                        '</div>' +  
+                                      '</div>'+
+                                      '<div class="modal-footer">'+
+                                        '<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>' +
+                                    '</div>' +
+                                 '</div>' +
+                             '</div>'   +   
+                        '</div>'*/
+                    //</div>
+                    );
+                });   
+            });   
+
+        $('button#detBtn').click(function(){
+            console.log("click");
+            alert();
+            /*var eventName = $("h3#eventName").val();
+            console.log(eventName);
             var url="showEvents.php";
 
             $.getJSON(url,function(json){
             // loop through the data here
                 $.each(json.members,function(i,dat){
-                    $("#fbEv").append( 
-                        '<div class="panel panel-default"> ' +
-                           ' <div class="panel-body" id="fbEv"> ' +
-                                '<h3>' +
-                                     dat.name +
-                                '</h3><br>' +
-                                dat.place + '<br>' +
-                                dat.owner_name +
-                                '<button class="btn btn-primary pull-right" data-toggle="modal" data-target="#detailsModal"> ΛΕΠΤΟΜΕΡΕΙΕΣ </button> ' +
-                            '</div>' +
-                       '</div>' 
-                    );
-                    $("#modalTitle").append(
-                       '<h4 class="modal-title" id="detailsModalLabel">' +
-                            dat.name +
-                        '</h4>'  
-                        //'<div class="modal-body" id="detailsModalBody">' +
-                          //  dat.description +
-                        //'</div>' 
-                    );
-                    $("#detailsModalBody").append(
-                        '<div class="modal-body" id="detailsModalBody">' +
-                            dat.description +
-                        '</div>' 
-                    );
-
+                    if(eventName == dat.name){
+                        console.log("Button success");
+                    }
                 });
-            });    // ADD MODAL TO fbEv!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            });*/
+        });
 
-            $("#details").click(function(){
-                $(this).hide();
-
-                console.log("Yeah \n");
+           
+       $("#searchBtn").click(function(){
+            var data = $('input#searchQuery').val();
+            console.log(data);
+            //data = data.serialize();
+            $.ajax({
+                type: "POST",
+                dataType: "json",
+                url: "search.php", //Relative or absolute path to login.php file
+                data: {"search" : data},
+                success: function(data) { 
+                    if(data.search != null){
+                        $('#searchModal').empty();
+                        $.each(data.search,function(j,src){
+                            //console.log("Success" + src['name']);
+                            //$("#tempRes").append('<div>' + src.name + '</div>');
+                            $('#searchModal').modal('show');
+                            $('#searchModal').append(
+                                    '<div class="modal-dialog">' +
+                                        ' <div class="modal-content" id="searchModalData">' +
+                                            ' <div class="modal-header" id="searchmodalTitle">' +
+                                               ' <h4 class="modal-title" id="searchModalLabel"> ' +
+                                                    src.name +
+                                                '</h4>' +
+                                            '</div>' +
+                                            '<div class="modal-body" id="searchModalBody"> '+ 
+                                                '<div class="modal-body" id="searchModalBody">' +
+                                                    src.description +
+                                                '</div>' +
+                                            '</div>'+
+                                            '<div class="modal-footer">'+
+                                                '<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>' +
+                                            '</div>' +
+                                        '</div>' +
+                                    '</div>' 
+                            );
+                        }); 
+                    } else {
+                        $("#tempRes").empty();
+                        $("#tempRes").append('<div> Δεν βρέθηκαν αποτελέσματα </div>');
+                    }
+                }
             });
+            return false;
+        });
+
+
 
             console.log("finish!");
-        });
+        }); 
     </script>
 
 </body>

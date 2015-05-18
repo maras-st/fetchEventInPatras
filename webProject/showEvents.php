@@ -13,6 +13,7 @@
 	{
 	  die('Could not get data: ' . mysql_error());
 	}
+
 	while($row = mysqli_fetch_assoc($retval))
 	{
 	     //echo "ID :" . $row['id'] ." <br> " . "NAME :" . $row['name'] . "<br> " ;
@@ -25,7 +26,5 @@
 	//echo " \n\nFetched data successfully\n\n";
 	//$array = mysqli_fetch_row($retval);
 	$conn->close();
-    
-
 
 ?>
