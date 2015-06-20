@@ -67,10 +67,10 @@
                         <a class="page-scroll" href="#events">Events</a>
                     </li>
                     <li>
-                        <a class="page-scroll" href="#events"> Contact </a>
+                        <a class="page-scroll" href="#contact"> Contact </a>
                     </li>
                     <li>
-                        <a href="logout.php" > Logout</a>
+                        <a href="logout.php"> Logout</a>
                     </li>
                 </ul>
             </div>
@@ -85,64 +85,44 @@
                 <div class="col-lg-8 col-lg-offset-2 text-center">
                     <h2 class="section-heading">Administrator</h2>
                     <hr class="light">
-                    <p class="text-faded">Start Bootstrap has everything you need to get your new website up and running in no time! All of the templates and themes on Start Bootstrap are open source, free to download, and easy to use. No strings attached!</p>
+                    <p class="text-faded">Μπορείς να αναζητήσεις όλα τα event που γίνονται στην Πάτρα! Επιπλεόν, μπορείς να προσθέσεις τα δικά σου event ή να διαγράψεις κάποιο απο τα υπάρχοντα!</p>
                     <div class="col-lg-offset2 col-md-offset2">
                         <div class="input-group">
-                          <input type="text" class="form-control" aria-label="...">
+                          <input id="queryPanelInput" type="text" class="form-control" aria-label="...">
                           <div class="input-group-btn">
                             <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Action <span class="caret"></span></button>
                             <ul class="dropdown-menu dropdown-menu-right" role="menu">
-                              <li><a href="#">Αναζήτηση</a></li>
-                              <li><a href="#">Προσθήκη</a></li>
-                              <li><a href="#">Διαγραφή</a></li>
+                              <li><a href="#" id="searchQueryPanel">Αναζήτηση</a></li>
+                              <li><a href="#" id="addQueryPanel">Προσθήκη</a></li>
+                              <li><a href="#" id="deleteQueryPanel">Διαγραφή</a></li>
                             </ul>
                           </div><!-- /btn-group -->
                         </div><!-- /input-group -->
-                      </div><!-- /.col-lg-6 -->   
+                      </div><!-- /.col-lg-6 -->  
+
+
+                    <div class="tempResPanelPanel" id="tempResPanel" name="tempResPanel">
+                    </div> 
                 </div>
             </div>
         </div>
     </section>
 
     <section id="events">
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-12 text-center">
-                        <h2 class="section-heading">Events</h2>
-                        <hr class="primary">
-                    </div>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg col-md col-sm text-center" id="fbEv">
+                    <hr class="primary">
+                        
                 </div>
-            </div>
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-offset col-md-offset col-sm-offset text-center">
-                        <div class="panel panel-default">
-                            <div class="panel-body">
-                                   Basic panel example
-                             </div>
-                        </div>
-                    </div>
-                   <div class="col-lg-offset col-md-offset col-sm-offset text-center">
-                        <div class="panel panel-default">
-                            <div class="panel-body">
-                                   Basic panel example
-                             </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-offset col-md-offset col-sm-offset text-center">
-                        <div class="panel panel-default">
-                            <div class="panel-body">
-                                   Basic panel example
-                             </div>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
+            </div> 
+        </div>
     </section>
 
 
-    
+    <div class="modal fade" id="searchModalPanel" tabindex="-1" role="dialog" aria-labelledby="searchModalPanelLabel" aria-hidden="true">
+      
+    </div>
    
 
     <section id="contact" style="background:#A1A8A3">
@@ -151,13 +131,17 @@
                 <div class="col-lg-8 col-lg-offset-2 text-center">
                     <h2 class="section-heading">Επικοινωνία</h2>
                     <hr class="primary">
-                    <p>Ready to start your next project with us? That's great! Give us a call or send us an email and we will get back to you as soon as possible!</p>
+                    <p>Για οποιαδήποτε πρόβλημα, απορία ή διευκρίνηση στείλε mail στα...</p>
                 </div>
-                <div class="col-lg-4 col-lg-offset-2 text-center">
+                <div class="col-lg-3 col-lg-offset-1 text-center">
                     <i class="fa fa-envelope-o fa-3x wow bounceIn" data-wow-delay=".1s"></i>
                     <p><a href="mailto:yfantis@ceid.upatras.gr">yfantis@ceid.upatras.gr</a></p>
                 </div>
-                <div class="col-lg-4 text-center">
+                <div class="col-lg-3 col-lg-offset-1 text-center">
+                    <i class="fa fa-envelope-o fa-3x wow bounceIn" data-wow-delay=".1s"></i>
+                    <p><a href="mailto:paparod@ceid.upatras.gr">paparod@ceid.upatras.gr</a></p>
+                </div>
+                <div class="col-lg-3 text-center">
                     <i class="fa fa-envelope-o fa-3x wow bounceIn" data-wow-delay=".1s"></i>
                     <p><a href="mailto:maras@ceid.upatras.gr">maras@ceid.upatras.gr</a></p>
                 </div>
@@ -178,6 +162,248 @@
 
     <!-- Custom Theme JavaScript -->
     <script src="js/creative.js"></script>
+
+<!-- GET facebook events -->
+    <script type="text/javascript">
+        $("document").ready(function() {
+            console.log("ready!");
+
+            var url="showEvents.php";
+
+            $.getJSON(url,function(json){            // loop through the data here
+                $.each(json.members,function(i,dat){
+                    $('#fbEv').append( 
+                        '<div class="panel panel-default"> ' +
+                           ' <div class="panel-body" id="fbEv"> ' +
+                                '<h3 id="eventName">' +
+                                     dat.name +
+                                '</h3><br>' +
+                                dat.place + '<br>' +
+                                dat.owner_name +
+                                '<button class="btn btn-primary pull-right" id="detBtn" name="detBtn" data-toggle="modal" data-target="#detailsModal"> ΛΕΠΤΟΜΕΡΕΙΕΣ </button>' +
+                            '</div>' +
+                       '</div>'
+                        //<div class="modal fade" id="detailsModal" tabindex="-1" role="dialog" aria-labelledby="detailsModalLabel" aria-hidden="true"> 
+                       /* '<div class="modal" id="detailsModal" tabindex="-1" role="dialog" aria-labelledby="searchModalPanelLabel">'+
+                            '<div class="modal-dialog">' +
+                                ' <div class="modal-content" id="detailsModalData">' +
+                                  ' <div class="modal-header" id="modalTitle">' +
+                                       ' <h4 class="modal-title" id="detailsModalLabel"> ' +
+                                             dat.name +
+                                        '</h4>' +
+                                      '</div>' +
+                                      '<div class="modal-body" id="detailsModalBody"> '+  
+                                        '<div class="modal-body" id="detailsModalBody">' +
+                                               dat.description +
+                                        '</div>' +  
+                                      '</div>'+
+                                      '<div class="modal-footer">'+
+                                        '<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>' +
+                                    '</div>' +
+                                 '</div>' +
+                             '</div>'   +   
+                        '</div>'*/
+                    //</div>
+                    );
+                });   
+            });  
+
+
+         /*search button*/    
+           $("#searchQueryPanel").click(function(){
+                var data = $('input#queryPanelInput').val();
+                console.log(data);
+                //data = data.serialize();
+                $.ajax({
+                    type: "POST",
+                    dataType: "json",
+                    url: "search.php", //Relative or absolute path to search.php file
+                    data: {"search" : data},
+                    success: function(data) { 
+                        if(data.search != null){
+                            $("#tempResPanel").empty();
+                            $('#searchModalPanel').empty();
+                            $.each(data.search,function(j,src){
+                                //console.log("Success" + src['name']);
+                                //$("#tempResPanel").append('<div>' + src.name + '</div>');
+                                $('#searchModalPanel').modal('show');
+                                $('#searchModalPanel').append(
+                                        '<div class="modal-dialog">' +
+                                            ' <div class="modal-content" id="searchModalPanelData">' +
+                                                ' <div class="modal-header" id="searchmodalPanelTitle">' +
+                                                   ' <h4 class="modal-title" id="searchModalPanelLabel"> ' +
+                                                        src.name +
+                                                    '</h4>' +
+                                                '</div>' +
+                                                '<div class="modal-body" id="searchModalPanelBody"> '+ 
+                                                    '<div class="modal-body" id="searchModalPanelBody">' +
+                                                        src.description +
+                                                    '</div>' +
+                                                '</div>'+
+                                                '<div class="modal-footer">'+
+                                                    '<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>' +
+                                                '</div>' +
+                                            '</div>' +
+                                        '</div>' 
+                                );
+                            }); 
+                        } else {
+                            $("#tempResPanel").empty();
+                            $("#tempResPanel").append('<div> Δεν βρέθηκαν αποτελέσματα </div>');
+                        }
+                    }
+                });
+                return false;
+            });
+
+            $("#addQueryPanel").click(function(){
+                $("#tempResPanel").empty();
+                var data = $('input#queryPanelInput').val();
+                console.log(data);
+                //data = data.serialize();
+                $.ajax({
+                    type: "POST",
+                    dataType: "json",
+                    url: "addition.php", //Relative or absolute path to delete.php file
+                    data: {"addData" : data},
+                    success: function(data) { 
+                        //console.log(data.deleteData);
+                        if(data.addData != 0){ 
+                            //console.log("test:" + data.deleteData);
+                            $("#tempResPanel").empty();
+                            $("#tempResPanel").append('<div> Διαγραφή επιτυχής </div>');
+                        } else if(data.deleteData == 0) {
+                            $("#tempResPanel").empty();
+                            $("#tempResPanel").append('<div> Διαγραφή απέτυχε. Η ζητούμενη σελίδα δε βρέθηκε </div>');
+                        }
+                    }
+                });
+                 //location.reload(true);
+                 //$( "section#events" ).load( "panel.html  section#events" );
+                //$('#events').load(window.location.href + ' #events');
+
+               /*     
+                var url="showEvents.php";
+
+                $.getJSON(url,function(json){            // loop through the data here
+                    $.each(json.members,function(i,dat){
+                        $('#fbEv').append( 
+                            '<div class="panel panel-default"> ' +
+                               ' <div class="panel-body" id="fbEv"> ' +
+                                    '<h3 id="eventName">' +
+                                         dat.name +
+                                    '</h3><br>' +
+                                    dat.place + '<br>' +
+                                    dat.owner_name +
+                                    '<button class="btn btn-primary pull-right" id="detBtn" name="detBtn" data-toggle="modal" data-target="#detailsModal"> ΛΕΠΤΟΜΕΡΕΙΕΣ </button>' +
+                                '</div>' +
+                           '</div>'
+                        );
+                    });   
+                });  */ 
+                return false;
+            }); 
+
+
+            $("#deleteQueryPanel").click(function(){
+                $("#tempResPanel").empty();
+                var data = $('input#queryPanelInput').val();
+                //console.log(data);
+                //data = data.serialize();
+                $.ajax({
+                    type: "POST",
+                    dataType: "json",
+                    url: "delete.php", //Relative or absolute path to delete.php file
+                    data: {"deleteData" : data},
+                    success: function(data) { 
+                        //console.log(data.deleteData);
+                        //$('#events').load('panel.html #events').fadeIn();
+                        //$('#events').load("showEvents.php").fadeIn();
+                        console.log(data.deleteData);
+                        if(data.deleteData == 0){ 
+                            //console.log("test:" + data.deleteData);
+                            //location.reload(true);
+                            $("#tempResPanel").empty();
+                            $("#tempResPanel").append('<div> Διαγραφή επιτυχής </div>');
+
+                            //$('#events').load('panel.html #events').fadeIn();
+                            var url="showEvents.php";
+                            $.getJSON(url,function(json){            // loop through the data here
+                                $.each(json.members,function(i,dat){
+                                    $('#fbEv').append( 
+                                        '<div class="panel panel-default"> ' +
+                                           ' <div class="panel-body" id="fbEv"> ' +
+                                                '<h3 id="eventName">' +
+                                                     dat.name +
+                                                '</h3><br>' +
+                                                dat.place + '<br>' +
+                                                dat.owner_name +
+                                                '<button class="btn btn-primary pull-right" id="detBtn" name="detBtn" data-toggle="modal" data-target="#detailsModal"> ΛΕΠΤΟΜΕΡΕΙΕΣ </button>' +
+                                            '</div>' +
+                                       '</div>'
+                                    );
+                                });   
+                            });
+                             //$('#events').load('panel.html #events').fadeIn();
+                             $("#events").delay(3000);
+                             location.reload(true);
+
+                        } else if(data.deleteData != 0) {
+                            $("#tempResPanel").empty();
+                            $("#tempResPanel").append('<div> Διαγραφή απέτυχε. Η ζητούμενη σελίδα δε βρέθηκε </div>');
+                        }
+                        //$("#events").empty();
+                        /*var url="showEvents.php";
+                        $.getJSON(url,function(json){            // loop through the data here
+                            $.each(json.members,function(i,dat){
+                                $('#fbEv').append( 
+                                    '<div class="panel panel-default"> ' +
+                                       ' <div class="panel-body" id="fbEv"> ' +
+                                            '<h3 id="eventName">' +
+                                                 dat.name +
+                                            '</h3><br>' +
+                                            dat.place + '<br>' +
+                                            dat.owner_name +
+                                            '<button class="btn btn-primary pull-right" id="detBtn" name="detBtn" data-toggle="modal" data-target="#detailsModal"> ΛΕΠΤΟΜΕΡΕΙΕΣ </button>' +
+                                        '</div>' +
+                                   '</div>'
+                                );
+                            });   
+                        }); */
+                    }
+                });
+                 //location.reload(true);
+                 //$( "section#events" ).load( "panel.html  section#events" );
+                //$('#events').load(window.location.href + ' #events');
+
+               /*     
+                var url="showEvents.php";
+
+                $.getJSON(url,function(json){            // loop through the data here
+                    $.each(json.members,function(i,dat){
+                        $('#fbEv').append( 
+                            '<div class="panel panel-default"> ' +
+                               ' <div class="panel-body" id="fbEv"> ' +
+                                    '<h3 id="eventName">' +
+                                         dat.name +
+                                    '</h3><br>' +
+                                    dat.place + '<br>' +
+                                    dat.owner_name +
+                                    '<button class="btn btn-primary pull-right" id="detBtn" name="detBtn" data-toggle="modal" data-target="#detailsModal"> ΛΕΠΤΟΜΕΡΕΙΕΣ </button>' +
+                                '</div>' +
+                           '</div>'
+                        );
+                    });   
+                });  */ 
+                return false;
+            });    
+
+
+            console.log("finish!");
+        }); 
+    </script>
+     
+
 
 </body>
 

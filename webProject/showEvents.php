@@ -3,9 +3,7 @@
 	include_once("connToDB.php");
 
 
-	$sql_fetch = " SELECT name,place,owner_name,description FROM eventsData ; ";
-
-	
+	$sql_fetch = " SELECT name,place,owner_name,description,dateNtime,cover_photo_url FROM eventsData ORDER BY dateNtime ; ";
 
 	$retval = mysqli_query($conn, $sql_fetch);
 	

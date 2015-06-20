@@ -3,7 +3,7 @@
 	$hostname="localhost"; //local server name default localhost
 	$usernameDB="";  //mysql username default is root.
 	$passwordDB="";       
-	$database="webProjectDB";  //database name which you created
+	$database="";  //database name which you created
 
 	$error=''; // Variable To Store Error Message
 	

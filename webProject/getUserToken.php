@@ -111,7 +111,7 @@ session_start();
 
     $owner = $graphObject1['owner']->name;
     //echo $owner;
-    $descr = $graphObject1['description'];
+    $descr = mysql_real_escape_string($graphObject1['description']);
 
 
     $datetime = new DateTime($graphObject1['start_time']);
