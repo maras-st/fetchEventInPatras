@@ -29,7 +29,7 @@
 	// SQL query to fetch information of registerd users and finds user match.
 	$query = mysqli_query($conn, "SELECT * FROM users WHERE username='$username' AND password='$password'; ");
 	$arr = mysqli_fetch_array($query);
-	print_r('Yeah:' . $arr['username']);
+	//print_r('Yeah:' . $arr['username']);
 
 	$_SESSION['username']=$arr['username'];
 	print_r($_SESSION['username']);

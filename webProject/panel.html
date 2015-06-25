@@ -19,7 +19,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Creative - Start Bootstrap Theme</title>
+    <title>Events in Patras</title>
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css">
@@ -85,7 +85,7 @@
                 <div class="col-lg-8 col-lg-offset-2 text-center">
                     <h2 class="section-heading">Administrator</h2>
                     <hr class="light">
-                    <p class="text-faded">Μπορείς να αναζητήσεις όλα τα event που γίνονται στην Πάτρα! Επιπλεόν, μπορείς να προσθέσεις τα δικά σου event ή να διαγράψεις κάποιο απο τα υπάρχοντα!</p>
+                    <p class="text-faded">Μπορείς να αναζητήσεις όλα τα event που γίνονται στην Πάτρα! Επιπλεόν, μπορείς να προσθέσεις τα δικά σου event, προσθέτοντας απλά το όνομα της σελίδας, ή να διαγράψεις κάποιο απο τα υπάρχοντα!</p>
                     <div class="col-lg-offset2 col-md-offset2">
                         <div class="input-group">
                           <input id="queryPanelInput" type="text" class="form-control" aria-label="...">
@@ -108,10 +108,11 @@
         </div>
     </section>
 
-    <section id="events">
+    <section id="events" style="background-color:#EEEEEE;">
         <div class="container">
             <div class="row">
                 <div class="col-lg col-md col-sm text-center" id="fbEv">
+                    <h2 class="section-heading">Events</h2>
                     <hr class="primary">
                         
                 </div>
@@ -168,143 +169,176 @@
         $("document").ready(function() {
             console.log("ready!");
 
+            var myApp;
+            myApp = myApp || (function () {
+                var pleaseWaitDiv = $(
+                    '<div class="modal fade" id="pleaseWaitDialog" data-backdrop="static" data-keyboard="false">'+
+                        '<div class="modal-dialog">' +
+                            ' <div class="modal-content">' +
+                                '<div class="modal-header" style="background-color:#EEEEEE;">'+
+                                    '<h1>Processing...</h1>'+
+                                '</div>'+
+                                '<div class="modal-body">'+
+                                    '<div class="progress">'+
+                                        '<div class="progress-bar progress-bar-info progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%"">'+
+                                        '</div>'+
+                                    '</div>'+   
+                                '</div>'+
+                            '</div>'+    
+                        '</div>'+    
+                    '</div>');
+                return {
+                    showPleaseWait: function() {
+                        pleaseWaitDiv.modal();
+                    },
+                    hidePleaseWait: function () {
+                        pleaseWaitDiv.modal('hide');
+                    },
+
+                };
+            })();
+
             var url="showEvents.php";
 
             $.getJSON(url,function(json){            // loop through the data here
                 $.each(json.members,function(i,dat){
+                    //var date = new Date(dat.dateNtime);
+                    //// Split timestamp into [ Y, M, D, h, m, s ]
+                    var temp = dat.dateNtime;
+                    var t = temp.split(/[- :]/);
+                    // Apply each element to the Date function
+                    var d = new Date(t[0], t[1]-1, t[2], t[3], t[4], t[5]);
+                    var test = new Date(d);
+                    //console.log(d.toDateString());
                     $('#fbEv').append( 
-                        '<div class="panel panel-default"> ' +
-                           ' <div class="panel-body" id="fbEv"> ' +
+                        '<div class="panel panel-default""> ' +
+                           ' <div class="panel-body" id="fbEv' + i + '"> ' +
                                 '<h3 id="eventName">' +
                                      dat.name +
                                 '</h3><br>' +
-                                dat.place + '<br>' +
-                                dat.owner_name +
-                                '<button class="btn btn-primary pull-right" id="detBtn" name="detBtn" data-toggle="modal" data-target="#detailsModal"> ΛΕΠΤΟΜΕΡΕΙΕΣ </button>' +
+                                '<b>Πού: </b>' + dat.place + '<br>' +
+                                '<b>Πότε: </b>' + dat.dateNtime + '<br>' +
+                                '<b>Διοργανωτής: </b>' + dat.owner_name + '<br>' +
+                                '<img src="' + dat.cover_photo_url + '" alt="event photo"  style="float:left; width:70px; height:80px;"' + '<br>' +
+                                '<button class="btn btn-primary pull-right" id="detBtn" name="detBtn" data-toggle="modal" data-target="#detailsModal' + i + '"> ΛΕΠΤΟΜΕΡΕΙΕΣ </button>' +
                             '</div>' +
-                       '</div>'
-                        //<div class="modal fade" id="detailsModal" tabindex="-1" role="dialog" aria-labelledby="detailsModalLabel" aria-hidden="true"> 
-                       /* '<div class="modal" id="detailsModal" tabindex="-1" role="dialog" aria-labelledby="searchModalPanelLabel">'+
-                            '<div class="modal-dialog">' +
-                                ' <div class="modal-content" id="detailsModalData">' +
-                                  ' <div class="modal-header" id="modalTitle">' +
-                                       ' <h4 class="modal-title" id="detailsModalLabel"> ' +
-                                             dat.name +
-                                        '</h4>' +
-                                      '</div>' +
-                                      '<div class="modal-body" id="detailsModalBody"> '+  
-                                        '<div class="modal-body" id="detailsModalBody">' +
-                                               dat.description +
-                                        '</div>' +  
-                                      '</div>'+
-                                      '<div class="modal-footer">'+
-                                        '<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>' +
-                                    '</div>' +
-                                 '</div>' +
-                             '</div>'   +   
-                        '</div>'*/
-                    //</div>
+                       '</div>' +
+                        '<div class="modal fade" id="detailsModal' + i + '" tabindex="-1" role="dialog" aria-labelledby="detailsModalLabel" aria-hidden="true"> ' +
+                                '<div class="modal-dialog">' +
+                                    ' <div class="modal-content" id="detailsModalData">' +
+                                      ' <div class="modal-header" id="modalTitle" style="background-color:#EEEEEE;">' +
+                                           ' <h4 class="modal-title" id="detailsModalLabel"> ' +
+                                                 dat.name +
+                                            '</h4>' +
+                                          '</div>' +
+                                          '<div class="modal-body" id="detailsModalBody"> '+  
+                                            '<div class="modal-body" id="detailsModalBody">' +
+                                                   dat.description +
+                                            '</div>' +  
+                                          '</div>'+
+                                          '<div class="modal-footer" style="background-color:#EEEEEE;">'+
+                                            '<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>' +
+                                        '</div>' +
+                                     '</div>' +
+                                 '</div>'   +   
+                            '</div>' +
+                        '</div>'
                     );
                 });   
-            });  
+            }); 
 
 
-         /*search button*/    
-           $("#searchQueryPanel").click(function(){
-                var data = $('input#queryPanelInput').val();
-                console.log(data);
-                //data = data.serialize();
-                $.ajax({
-                    type: "POST",
-                    dataType: "json",
-                    url: "search.php", //Relative or absolute path to search.php file
-                    data: {"search" : data},
-                    success: function(data) { 
-                        if(data.search != null){
-                            $("#tempResPanel").empty();
-                            $('#searchModalPanel').empty();
-                            $.each(data.search,function(j,src){
-                                //console.log("Success" + src['name']);
-                                //$("#tempResPanel").append('<div>' + src.name + '</div>');
-                                $('#searchModalPanel').modal('show');
-                                $('#searchModalPanel').append(
-                                        '<div class="modal-dialog">' +
-                                            ' <div class="modal-content" id="searchModalPanelData">' +
-                                                ' <div class="modal-header" id="searchmodalPanelTitle">' +
-                                                   ' <h4 class="modal-title" id="searchModalPanelLabel"> ' +
-                                                        src.name +
-                                                    '</h4>' +
-                                                '</div>' +
-                                                '<div class="modal-body" id="searchModalPanelBody"> '+ 
-                                                    '<div class="modal-body" id="searchModalPanelBody">' +
-                                                        src.description +
+             /*search button impl*/    
+               $("#searchQueryPanel").click(function(){
+                    var data = $('input#queryPanelInput').val();
+                    console.log(data);
+                    //data = data.serialize();
+                    $.ajax({
+                        type: "POST",
+                        dataType: "json",
+                        url: "search.php", //Relative or absolute path to search.php file
+                        data: {"search" : data},
+                        success: function(data) { 
+                            if(data.search != null){
+                                $("#tempResPanel").empty();
+                                $('#searchModalPanel').empty();
+                                $.each(data.search,function(j,src){
+                                    //console.log("Success" + src['name']);
+                                    //$("#tempResPanel").append('<div>' + src.name + '</div>');
+                                    $('#searchModalPanel').modal('show');
+                                    $('#searchModalPanel').append(
+                                            '<div class="modal-dialog">' +
+                                                ' <div class="modal-content" id="searchModalPanelData">' +
+                                                    ' <div class="modal-header" id="searchmodalPanelTitle" style="background-color:#EEEEEE;">' +
+                                                       ' <h4 class="modal-title" id="searchModalPanelLabel"> ' +
+                                                            src.name +
+                                                        '</h4>' +
                                                     '</div>' +
-                                                '</div>'+
-                                                '<div class="modal-footer">'+
-                                                    '<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>' +
+                                                    '<div class="modal-body" id="searchModalPanelBody"> '+ 
+                                                        '<div class="modal-body" id="searchModalPanelBody">' +
+                                                            src.description +
+                                                        '</div>' +
+                                                    '</div>'+
+                                                    '<div class="modal-footer" style="background-color:#EEEEEE;">'+
+                                                        '<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>' +
+                                                    '</div>' +
                                                 '</div>' +
-                                            '</div>' +
-                                        '</div>' 
-                                );
-                            }); 
-                        } else {
-                            $("#tempResPanel").empty();
-                            $("#tempResPanel").append('<div> Δεν βρέθηκαν αποτελέσματα </div>');
+                                            '</div>' 
+                                    );
+                                }); 
+                            } else {
+                                $("#tempResPanel").empty();
+                                $("#tempResPanel").append('<div> Δεν βρέθηκαν αποτελέσματα </div>');
+                            }
                         }
-                    }
+                    });
+                    return false;
                 });
-                return false;
-            });
 
+
+            /*add button impl*/
             $("#addQueryPanel").click(function(){
                 $("#tempResPanel").empty();
                 var data = $('input#queryPanelInput').val();
                 console.log(data);
+                myApp.showPleaseWait();
+                //$('#events').delay(500000);
+                //myApp.hidePleaseWait();
                 //data = data.serialize();
                 $.ajax({
                     type: "POST",
                     dataType: "json",
-                    url: "addition.php", //Relative or absolute path to delete.php file
+                    url: "addition.php", //Relative or absolute path to addition.php file
                     data: {"addData" : data},
                     success: function(data) { 
-                        //console.log(data.deleteData);
-                        if(data.addData != 0){ 
-                            //console.log("test:" + data.deleteData);
+                        console.log(data.addData);
+                        if(data.addData == 0){ 
+                            myApp.hidePleaseWait();
                             $("#tempResPanel").empty();
-                            $("#tempResPanel").append('<div> Διαγραφή επιτυχής </div>');
-                        } else if(data.deleteData == 0) {
+                            $("#tempResPanel").append('<div> Προσθήκη επιτυχής </div>');
+                            $("#events").delay(10000);
+                            location.reload(true);
+                        } else if(data.addData == 1) {
+                            myApp.hidePleaseWait();
                             $("#tempResPanel").empty();
-                            $("#tempResPanel").append('<div> Διαγραφή απέτυχε. Η ζητούμενη σελίδα δε βρέθηκε </div>');
+                            $("#tempResPanel").append('<div> Τα events της συγκεκριμένης σελίδας υπάρχουν ήδη </div>');
+                        } else if(data.addData == 2) {
+                            myApp.hidePleaseWait();
+                            $("#tempResPanel").empty();
+                            $("#tempResPanel").append('<div> Δεν υπάρχουν events στη συγκεκριμένη σελίδα </div>');
+                        } else if(data.addData == 3) {
+                            myApp.hidePleaseWait();
+                            $("#tempResPanel").empty();
+                            $("#tempResPanel").append('<div> Προσθήκη απέτυχε. Η ζητούμενη σελίδα δε βρέθηκε </div>');
                         }
                     }
                 });
-                 //location.reload(true);
-                 //$( "section#events" ).load( "panel.html  section#events" );
-                //$('#events').load(window.location.href + ' #events');
-
-               /*     
-                var url="showEvents.php";
-
-                $.getJSON(url,function(json){            // loop through the data here
-                    $.each(json.members,function(i,dat){
-                        $('#fbEv').append( 
-                            '<div class="panel panel-default"> ' +
-                               ' <div class="panel-body" id="fbEv"> ' +
-                                    '<h3 id="eventName">' +
-                                         dat.name +
-                                    '</h3><br>' +
-                                    dat.place + '<br>' +
-                                    dat.owner_name +
-                                    '<button class="btn btn-primary pull-right" id="detBtn" name="detBtn" data-toggle="modal" data-target="#detailsModal"> ΛΕΠΤΟΜΕΡΕΙΕΣ </button>' +
-                                '</div>' +
-                           '</div>'
-                        );
-                    });   
-                });  */ 
+            
                 return false;
             }); 
 
 
+            /*delete button impl*/
             $("#deleteQueryPanel").click(function(){
                 $("#tempResPanel").empty();
                 var data = $('input#queryPanelInput').val();
@@ -319,82 +353,26 @@
                         //console.log(data.deleteData);
                         //$('#events').load('panel.html #events').fadeIn();
                         //$('#events').load("showEvents.php").fadeIn();
-                        console.log(data.deleteData);
+                        //console.log(data.deleteData);
                         if(data.deleteData == 0){ 
                             //console.log("test:" + data.deleteData);
                             //location.reload(true);
                             $("#tempResPanel").empty();
                             $("#tempResPanel").append('<div> Διαγραφή επιτυχής </div>');
 
-                            //$('#events').load('panel.html #events').fadeIn();
-                            var url="showEvents.php";
-                            $.getJSON(url,function(json){            // loop through the data here
-                                $.each(json.members,function(i,dat){
-                                    $('#fbEv').append( 
-                                        '<div class="panel panel-default"> ' +
-                                           ' <div class="panel-body" id="fbEv"> ' +
-                                                '<h3 id="eventName">' +
-                                                     dat.name +
-                                                '</h3><br>' +
-                                                dat.place + '<br>' +
-                                                dat.owner_name +
-                                                '<button class="btn btn-primary pull-right" id="detBtn" name="detBtn" data-toggle="modal" data-target="#detailsModal"> ΛΕΠΤΟΜΕΡΕΙΕΣ </button>' +
-                                            '</div>' +
-                                       '</div>'
-                                    );
-                                });   
-                            });
-                             //$('#events').load('panel.html #events').fadeIn();
-                             $("#events").delay(3000);
-                             location.reload(true);
+                            //$('#events').load('panel.html #events').fadeIn(); */
+                            $("#events").delay(10000); 
+                            location.reload(true);
 
                         } else if(data.deleteData != 0) {
                             $("#tempResPanel").empty();
                             $("#tempResPanel").append('<div> Διαγραφή απέτυχε. Η ζητούμενη σελίδα δε βρέθηκε </div>');
                         }
-                        //$("#events").empty();
-                        /*var url="showEvents.php";
-                        $.getJSON(url,function(json){            // loop through the data here
-                            $.each(json.members,function(i,dat){
-                                $('#fbEv').append( 
-                                    '<div class="panel panel-default"> ' +
-                                       ' <div class="panel-body" id="fbEv"> ' +
-                                            '<h3 id="eventName">' +
-                                                 dat.name +
-                                            '</h3><br>' +
-                                            dat.place + '<br>' +
-                                            dat.owner_name +
-                                            '<button class="btn btn-primary pull-right" id="detBtn" name="detBtn" data-toggle="modal" data-target="#detailsModal"> ΛΕΠΤΟΜΕΡΕΙΕΣ </button>' +
-                                        '</div>' +
-                                   '</div>'
-                                );
-                            });   
-                        }); */
+                        
                     }
                 });
-                 //location.reload(true);
-                 //$( "section#events" ).load( "panel.html  section#events" );
-                //$('#events').load(window.location.href + ' #events');
-
-               /*     
-                var url="showEvents.php";
-
-                $.getJSON(url,function(json){            // loop through the data here
-                    $.each(json.members,function(i,dat){
-                        $('#fbEv').append( 
-                            '<div class="panel panel-default"> ' +
-                               ' <div class="panel-body" id="fbEv"> ' +
-                                    '<h3 id="eventName">' +
-                                         dat.name +
-                                    '</h3><br>' +
-                                    dat.place + '<br>' +
-                                    dat.owner_name +
-                                    '<button class="btn btn-primary pull-right" id="detBtn" name="detBtn" data-toggle="modal" data-target="#detailsModal"> ΛΕΠΤΟΜΕΡΕΙΕΣ </button>' +
-                                '</div>' +
-                           '</div>'
-                        );
-                    });   
-                });  */ 
+                //location.reload(true);
+               
                 return false;
             });    
 
